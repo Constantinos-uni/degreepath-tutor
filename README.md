@@ -8,8 +8,8 @@ See the application in action:
 
 | Demo | Description | Download |
 |------|-------------|----------|
-| ⚡ Quick Demo | Fast-paced overview of all features (~49 MB) | [demo_fast.mp4](demos/demo_fast.mp4) |
-| 📖 Detailed Demo | Step-by-step walkthrough (~88 MB) | [demo_slow.mp4](demos/demo_slow.mp4) |
+| ⚡ Product Demo | Fast-paced overview of all features (~49 MB) | [demo_fast.mp4](demos/demo_fast.mp4) |
+| 📊 AI Study Reports | AI-generated personalized study reports (~16 MB) | [ai_study_report.mp4](demos/ai_study_report.mp4) |
 
 > **To watch**: Click the link → Click "View raw" or "Download" button
 
@@ -242,9 +242,11 @@ This project is dual-licensed:
 
 See [LICENSE](LICENSE) for details. For commercial licensing inquiries, please open an issue or contact via GitHub.
 
-## Author
+## Authors
 
-Constantinos - Macquarie University
+- **Constantinos Vidiniotis** - Macquarie University
+- **Alexandros Vidiniotis** - Macquarie University
+- **Joshua Pereira** - Macquarie University
 
 ## Acknowledgments
 
