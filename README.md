@@ -2,6 +2,17 @@
 
 An AI-powered academic advisor for Macquarie University students. Provides unit eligibility checking, prerequisite validation, personalized study reports, and interactive AI tutoring.
 
+## 🎬 Demo Videos
+
+See the application in action:
+
+| Demo | Description | Download |
+|------|-------------|----------|
+| ⚡ Quick Demo | Fast-paced overview of all features (~49 MB) | [demo_fast.mp4](demos/demo_fast.mp4) |
+| 📖 Detailed Demo | Step-by-step walkthrough (~88 MB) | [demo_slow.mp4](demos/demo_slow.mp4) |
+
+> **To watch**: Click the link → Click "View raw" or "Download" button
+
 ## Features
 
 - **Unit Lookup**: Search for unit details with live web scraping from official Macquarie unit guides
@@ -37,8 +48,8 @@ An AI-powered academic advisor for Macquarie University students. Provides unit 
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/Constantinos-uni/degreepath_tutor.git
-cd degreepath_tutor
+git clone https://github.com/Constantinos-uni/degreepath-tutor.git
+cd degreepath-tutor
 
 # Create virtual environment
 python -m venv venv
@@ -149,7 +160,7 @@ Without LM Studio, the system uses rule-based generation (still functional).
 ## Project Structure
 
 ```
-degreepath_tutor/
+degreepath-tutor/
 ├── backend/              # Part 1: Database, RAG, Web Search
 │   ├── main.py           # FastAPI application
 │   ├── database.py       # SQLite operations
@@ -163,6 +174,7 @@ degreepath_tutor/
 │   ├── conversation_manager.py  # Chat memory and context
 │   └── data/             # Conversation persistence
 ├── frontend/             # React frontend (optional)
+├── demos/                # Demo videos
 ├── tests/                # Test suite
 ├── .env.example          # Environment template
 ├── requirements.txt      # Python dependencies
