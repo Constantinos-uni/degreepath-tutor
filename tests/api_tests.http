@@ -1,0 +1,38 @@
+```http
+### Part 1 Health Check
+GET http://localhost:8000/health
+
+### Get Unit Details
+GET http://localhost:8000/unit/COMP1000
+
+### Check Eligibility
+POST http://localhost:8000/eligibility
+Content-Type: application/json
+
+{
+  "degree": "Bachelor of IT",
+  "completed_units": ["COMP1000"],
+  "query_units": ["COMP1010"]
+}
+
+### Part 2 Health Check
+GET http://localhost:8001/health
+
+### List Students
+GET http://localhost:8001/students
+
+### Get Specific Student
+GET http://localhost:8001/students/demo001
+
+### Generate Tutor Report
+POST http://localhost:8001/tutor-report
+Content-Type: application/json
+
+{
+  "unit_code": "COMP1010",
+  "student_id": "demo001"
+}
+
+### Generate Report (No Student)
+GET http://localhost:8001/tutor-report/COMP1000
+```

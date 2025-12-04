@@ -1,0 +1,23 @@
+# Part 2: Unit Study Tutor - Dependencies (LM Studio Version)
+
+# Core Framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+# NOTE: Updated to >=2.5.0 for Python 3.13 prebuilt wheels (avoids Rust compilation)
+pydantic>=2.5.0
+python-dotenv==1.0.0
+
+# HTTP Requests
+requests==2.31.0
+
+# Real Web Search (DuckDuckGo - Free, No API Key)
+duckduckgo-search==4.1.1
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+
+# NOTE: No heavy AI dependencies needed!
+# LM Studio handles the model inference via API calls to the local LM Studio server.
+# Conversation memory is handled with simple in-memory storage (no LangChain required).

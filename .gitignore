@@ -1,0 +1,78 @@
+# Environment and secrets
+.env
+.env.local
+.env.production
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+degreepath_tutor_DEMO/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# ChromaDB vector store (large files)
+backend/data/chroma_db/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+test_report.json
+
+# Node (frontend)
+node_modules/
+frontend/dist/
+frontend/build/
+.npm
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Conversation persistence (contains user data)
+part2/data/conversations/

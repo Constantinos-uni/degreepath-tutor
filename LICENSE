@@ -1,0 +1,70 @@
+# Dual License
+
+Copyright (c) 2024-2025 Constantinos (GitHub: Constantinos-uni)
+
+This software is available under a dual license model:
+
+---
+
+## Option 1: GNU Affero General Public License v3.0 (AGPL-3.0)
+
+For open source, non-commercial, and educational use.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+**Key AGPL-3.0 Requirements:**
+- Source code must be made available when distributing the software
+- Modifications must be released under the same license
+- **Network use is distribution**: If you run a modified version on a server
+  and let users interact with it, you must make the source available to them
+- Attribution must be maintained
+
+---
+
+## Option 2: Commercial License
+
+For commercial, proprietary, or SaaS use without AGPL obligations.
+
+If you wish to:
+- Use this software in a commercial product or service
+- Integrate this software into proprietary applications
+- Offer this software as a hosted service (SaaS) without releasing your source code
+- Remove the copyleft requirements of the AGPL
+
+You must obtain a commercial license.
+
+**To inquire about commercial licensing, please contact:**
+- GitHub: [@Constantinos-uni](https://github.com/Constantinos-uni)
+- Open an issue on this repository with the subject "Commercial License Inquiry"
+
+---
+
+## Third-Party Components
+
+This software uses third-party libraries that are subject to their own licenses.
+Please see the respective documentation for each dependency.
+
+---
+
+## Which License Applies to Me?
+
+| Use Case | License |
+|----------|---------|
+| Personal/Educational use | AGPL-3.0 (free) |
+| Academic research | AGPL-3.0 (free) |
+| Open source project (AGPL-compatible) | AGPL-3.0 (free) |
+| Internal company use (no distribution) | AGPL-3.0 (free) |
+| Commercial product/service | Commercial License (contact for pricing) |
+| SaaS offering | Commercial License (contact for pricing) |
+| Proprietary integration | Commercial License (contact for pricing) |

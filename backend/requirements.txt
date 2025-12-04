@@ -1,0 +1,11 @@
+langchain
+langchain-community
+langchain-huggingface
+chromadb
+sentence-transformers
+rank_bm25
+fastapi
+uvicorn
+requests
+beautifulsoup4
+pydantic

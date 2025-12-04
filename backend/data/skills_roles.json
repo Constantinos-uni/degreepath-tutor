@@ -1,0 +1,20 @@
+[
+  {
+    "skill": "SQL",
+    "roles": ["Data Analyst", "Database Administrator", "Backend Developer"],
+    "description": "Structured Query Language for managing relational databases.",
+    "certifications": ["Azure Data Fundamentals", "Google Data Analytics Certificate"]
+  },
+  {
+    "skill": "Python",
+    "roles": ["Data Scientist", "Software Engineer", "Machine Learning Engineer"],
+    "description": "A versatile programming language used for web development, data analysis, and AI.",
+    "certifications": ["PCEP – Certified Entry-Level Python Programmer"]
+  },
+  {
+    "skill": "React",
+    "roles": ["Frontend Developer", "Full Stack Developer"],
+    "description": "A JavaScript library for building user interfaces.",
+    "certifications": ["Meta Front-End Developer Professional Certificate"]
+  }
+]
