@@ -37,6 +37,321 @@ See the application in action:
                         └─────────────────┘
 ```
 
+### Detailed System Architecture
+
+```
+╔══════════════════════════════════════════════════════════════════════════════════╗
+║                           DEGREEPATH TUTOR - AGENTIC AI SYSTEM                   ║
+╠══════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                  ║
+║  ┌─────────────────────────────────────────────────────────────────────────────┐ ║
+║  │                         PRESENTATION LAYER                                   │ ║
+║  │  ┌─────────────────────────────────────────────────────────────────────────┐│ ║
+║  │  │                    React/Vite/TypeScript Frontend                       ││ ║
+║  │  │                         (Port 3000)                                     ││ ║
+║  │  │  • Unit Search UI        • Eligibility Checker    • Chat Interface     ││ ║
+║  │  │  • Student Dashboard     • Study Report Viewer    • SSE Streaming      ││ ║
+║  │  └─────────────────────────────────────────────────────────────────────────┘│ ║
+║  └─────────────────────────────────────────────────────────────────────────────┘ ║
+║                                       │                                          ║
+║                                       ▼                                          ║
+║  ┌─────────────────────────────────────────────────────────────────────────────┐ ║
+║  │                          API GATEWAY LAYER                                   │ ║
+║  │                                                                              │ ║
+║  │  ┌────────────────────────────┐    ┌────────────────────────────────────┐  │ ║
+║  │  │     PART 1 API (8000)      │    │        PART 2 API (8001)           │  │ ║
+║  │  │    backend/main.py         │◄───│         part2/main.py              │  │ ║
+║  │  │                            │    │                                    │  │ ║
+║  │  │  Endpoints:                │    │  Endpoints:                        │  │ ║
+║  │  │  • GET /unit/{code}        │    │  • GET/POST /students              │  │ ║
+║  │  │  • GET /unit/{code}/live   │    │  • POST /tutor-report              │  │ ║
+║  │  │  • POST /eligibility       │    │  • GET /tutor-report/{code}        │  │ ║
+║  │  │  • POST /rag/query         │    │  • POST /chat                      │  │ ║
+║  │  │  • POST /search/smart      │    │  • POST /chat/stream (SSE)         │  │ ║
+║  │  │  • GET /units/computing    │    │  • GET /chat/{id}/history          │  │ ║
+║  │  └────────────────────────────┘    └────────────────────────────────────┘  │ ║
+║  └─────────────────────────────────────────────────────────────────────────────┘ ║
+║                     │                              │                             ║
+║                     ▼                              ▼                             ║
+║  ┌─────────────────────────────────────────────────────────────────────────────┐ ║
+║  │                         AGENTIC AI LAYER                                     │ ║
+║  │                                                                              │ ║
+║  │  ┌─────────────────────────────────────────────────────────────────────────┐│ ║
+║  │  │                    ConversationManager                                  ││ ║
+║  │  │                 (part2/conversation_manager.py)                         ││ ║
+║  │  │                                                                         ││ ║
+║  │  │  ┌───────────────┐ ┌───────────────┐ ┌───────────────┐ ┌─────────────┐ ││ ║
+║  │  │  │ Memory System │ │ Topic Tracker │ │ RAG Retrieval │ │ LLM Client  │ ││ ║
+║  │  │  │               │ │               │ │               │ │             │ ││ ║
+║  │  │  │ • Short-term  │ │ • Current     │ │ • Query       │ │ • Generate  │ ││ ║
+║  │  │  │ • Long-term   │ │   Topic       │ │   Expansion   │ │   Response  │ ││ ║
+║  │  │  │ • Persistence │ │ • Unit Code   │ │ • Context     │ │ • Streaming │ ││ ║
+║  │  │  │   (JSON)      │ │ • Topic Tags  │ │   Building    │ │ • Fallback  │ ││ ║
+║  │  │  └───────────────┘ └───────────────┘ └───────────────┘ └─────────────┘ ││ ║
+║  │  │                                                                         ││ ║
+║  │  │  ┌─────────────────────────────────────────────────────────────────────┐││ ║
+║  │  │  │                    Agentic Loop Flow                                │││ ║
+║  │  │  │  1. Perceive → Parse user input, detect intent                      │││ ║
+║  │  │  │  2. Remember → Load conversation history, student context           │││ ║
+║  │  │  │  3. Retrieve → Query RAG for relevant knowledge                     │││ ║
+║  │  │  │  4. Reason   → Build prompt with system + context + history         │││ ║
+║  │  │  │  5. Act      → Generate response via LM Studio                      │││ ║
+║  │  │  │  6. Learn    → Update memory, persist conversation                  │││ ║
+║  │  │  └─────────────────────────────────────────────────────────────────────┘││ ║
+║  │  └─────────────────────────────────────────────────────────────────────────┘│ ║
+║  │                                                                              │ ║
+║  │  ┌─────────────────────────────────────────────────────────────────────────┐│ ║
+║  │  │                   Report Generator (part2/main.py)                      ││ ║
+║  │  │  • Quiz Generation      • Concept Explanations    • Resource Links     ││ ║
+║  │  │  • Study Tips           • Progress Tracking       • Topic Breakdown    ││ ║
+║  │  └─────────────────────────────────────────────────────────────────────────┘│ ║
+║  │                                                                              │ ║
+║  │  ┌─────────────────────────────────────────────────────────────────────────┐│ ║
+║  │  │                   LM Studio Client (part2/main.py)                      ││ ║
+║  │  │  • OpenAI-compatible API      • Model: Configurable (Gemma 2B, etc.)   ││ ║
+║  │  │  • Endpoint: localhost:1234   • Temperature: 0.7                        ││ ║
+║  │  │  • Streaming Support          • Fallback: Rule-based generation        ││ ║
+║  │  └─────────────────────────────────────────────────────────────────────────┘│ ║
+║  └─────────────────────────────────────────────────────────────────────────────┘ ║
+║                     │                              │                             ║
+║                     ▼                              ▼                             ║
+║  ┌─────────────────────────────────────────────────────────────────────────────┐ ║
+║  │                    KNOWLEDGE & RETRIEVAL LAYER                               │ ║
+║  │                                                                              │ ║
+║  │  ┌───────────────────────────────┐  ┌────────────────────────────────────┐ │ ║
+║  │  │     RAG System (backend/rag.py)│  │  Live Web Search                   │ │ ║
+║  │  │                               │  │  (backend/unit_search.py)          │ │ ║
+║  │  │  ┌─────────────────────────┐  │  │                                    │ │ ║
+║  │  │  │   Document Processor    │  │  │  ┌──────────────────────────────┐ │ │ ║
+║  │  │  │  • PDF Ingestion        │  │  │  │   BeautifulSoup4 Scraper    │ │ │ ║
+║  │  │  │  • Text Chunking        │  │  │  │                              │ │ │ ║
+║  │  │  │  • Metadata Extraction  │  │  │  │  • Unit Guide Parsing        │ │ │ ║
+║  │  │  └─────────────────────────┘  │  │  │  • Prerequisite Extraction   │ │ │ ║
+║  │  │                               │  │  │  • Learning Outcomes         │ │ │ ║
+║  │  │  ┌─────────────────────────┐  │  │  │  • Assessment Info           │ │ │ ║
+║  │  │  │   Embedding Pipeline    │  │  │  │  • Corequisite Handling      │ │ │ ║
+║  │  │  │  Model: all-MiniLM-L6-v2│  │  │  │  • Error Recovery            │ │ │ ║
+║  │  │  │  (HuggingFace)          │  │  │  └──────────────────────────────┘ │ │ ║
+║  │  │  └─────────────────────────┘  │  │                                    │ │ ║
+║  │  │                               │  │  Target URLs:                      │ │ ║
+║  │  │  ┌─────────────────────────┐  │  │  • unitguides.mq.edu.au           │ │ ║
+║  │  │  │   ChromaDB Vector Store │  │  │  • handbook.mq.edu.au             │ │ ║
+║  │  │  │  • Semantic Search      │  │  │                                    │ │ ║
+║  │  │  │  • Similarity Scoring   │  │  │  Features:                         │ │ ║
+║  │  │  │  • Top-K Retrieval      │  │  │  • Multiple year fallback         │ │ ║
+║  │  │  └─────────────────────────┘  │  │  • Session-based caching          │ │ ║
+║  │  │                               │  │  • Request retry logic             │ │ ║
+║  │  │  ┌─────────────────────────┐  │  └────────────────────────────────────┘ │ ║
+║  │  │  │    Query Expansion      │  │                                         │ ║
+║  │  │  │  • Synonym expansion    │  │                                         │ ║
+║  │  │  │  • Context augmentation │  │                                         │ ║
+║  │  │  └─────────────────────────┘  │                                         │ ║
+║  │  └───────────────────────────────┘                                         │ ║
+║  └─────────────────────────────────────────────────────────────────────────────┘ ║
+║                                       │                                          ║
+║                                       ▼                                          ║
+║  ┌─────────────────────────────────────────────────────────────────────────────┐ ║
+║  │                       DATA PERSISTENCE LAYER                                 │ ║
+║  │                                                                              │ ║
+║  │  ┌────────────────────┐ ┌────────────────────┐ ┌─────────────────────────┐ │ ║
+║  │  │  SQLite Database   │ │  ChromaDB Store    │ │  JSON File Storage      │ │ ║
+║  │  │  (degree_path.db)  │ │  (chroma_data/)    │ │  (part2/data/)          │ │ ║
+║  │  │                    │ │                    │ │                         │ │ ║
+║  │  │  Tables:           │ │  Collections:      │ │  Files:                 │ │ ║
+║  │  │  • units           │ │  • unit_documents  │ │  • conversations/       │ │ ║
+║  │  │  • learning_       │ │  • course_info     │ │    {student_id}.json   │ │ ║
+║  │  │    outcomes        │ │                    │ │  • reports/             │ │ ║
+║  │  │  • prerequisites   │ │  Embeddings:       │ │    {unit_code}.json    │ │ ║
+║  │  │  • students        │ │  • 384 dimensions  │ │                         │ │ ║
+║  │  │  • completed_units │ │  • Cosine similarity│ │  Structure:             │ │ ║
+║  │  │                    │ │                    │ │  • messages[]           │ │ ║
+║  │  │  Operations:       │ │                    │ │  • topic_history[]      │ │ ║
+║  │  │  • CRUD for units  │ │                    │ │  • metadata             │ │ ║
+║  │  │  • Eligibility     │ │                    │ │                         │ │ ║
+║  │  │    queries         │ │                    │ │                         │ │ ║
+║  │  └────────────────────┘ └────────────────────┘ └─────────────────────────┘ │ ║
+║  └─────────────────────────────────────────────────────────────────────────────┘ ║
+║                                       │                                          ║
+║                                       ▼                                          ║
+║  ┌─────────────────────────────────────────────────────────────────────────────┐ ║
+║  │                      EXTERNAL SERVICES LAYER                                 │ ║
+║  │                                                                              │ ║
+║  │  ┌─────────────────────────┐  ┌──────────────────────────────────────────┐ │ ║
+║  │  │      LM Studio          │  │         Macquarie University             │ │ ║
+║  │  │   (localhost:1234)      │  │              Web Services                │ │ ║
+║  │  │                         │  │                                          │ │ ║
+║  │  │  • OpenAI-compatible    │  │  • unitguides.mq.edu.au                  │ │ ║
+║  │  │    /v1/chat/completions │  │    - Unit descriptions                  │ │ ║
+║  │  │  • /v1/models           │  │    - Prerequisites                       │ │ ║
+║  │  │  • Streaming support    │  │    - Learning outcomes                   │ │ ║
+║  │  │                         │  │    - Assessment details                  │ │ ║
+║  │  │  Models supported:      │  │                                          │ │ ║
+║  │  │  • Gemma 2B             │  │  • handbook.mq.edu.au                    │ │ ║
+║  │  │  • Llama 3              │  │    - Course structures                   │ │ ║
+║  │  │  • Mistral              │  │    - Degree requirements                 │ │ ║
+║  │  │  • Any GGUF model       │  │                                          │ │ ║
+║  │  └─────────────────────────┘  └──────────────────────────────────────────┘ │ ║
+║  └─────────────────────────────────────────────────────────────────────────────┘ ║
+║                                                                                  ║
+╚══════════════════════════════════════════════════════════════════════════════════╝
+```
+
+### Agentic Conversation Flow
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                        AGENTIC CONVERSATION LOOP                                 │
+└──────────────────────────────────────────────────────────────────────────────────┘
+
+User Message
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  1. PERCEIVE                                                                    │
+│     ┌─────────────────────────────────────────────────────────────────────────┐ │
+│     │  • Parse user input                                                     │ │
+│     │  • Detect intent (question, request, clarification)                     │ │
+│     │  • Extract unit codes (regex: [A-Z]{3,4}\d{3,4})                        │ │
+│     │  • Identify topic keywords                                              │ │
+│     └─────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  2. REMEMBER                                                                    │
+│     ┌─────────────────────────────────────────────────────────────────────────┐ │
+│     │  • Load conversation history from JSON                                  │ │
+│     │  • Retrieve student context (completed units, progress)                 │ │
+│     │  • Get current topic and topic history                                  │ │
+│     │  • Apply context window limits (last N messages)                        │ │
+│     └─────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  3. RETRIEVE                                                                    │
+│     ┌─────────────────────────────────────────────────────────────────────────┐ │
+│     │  • Query ChromaDB with embedded user message                            │ │
+│     │  • Apply query expansion for better recall                              │ │
+│     │  • Fetch top-K relevant documents                                       │ │
+│     │  • Include unit-specific context if unit code detected                  │ │
+│     │  • Optionally fetch live data via Part 1 API                            │ │
+│     └─────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  4. REASON                                                                      │
+│     ┌─────────────────────────────────────────────────────────────────────────┐ │
+│     │  Build prompt:                                                          │ │
+│     │  ┌─────────────────────────────────────────────────────────────────┐   │ │
+│     │  │  SYSTEM: You are DegreePath Tutor, an AI academic advisor...   │   │ │
+│     │  │          Current topic: {topic}                                 │   │ │
+│     │  │          Student context: {completed_units, progress}           │   │ │
+│     │  ├─────────────────────────────────────────────────────────────────┤   │ │
+│     │  │  CONTEXT: {RAG retrieved documents}                             │   │ │
+│     │  │           {Unit details from Part 1 API}                        │   │ │
+│     │  ├─────────────────────────────────────────────────────────────────┤   │ │
+│     │  │  HISTORY: {Previous conversation messages}                      │   │ │
+│     │  ├─────────────────────────────────────────────────────────────────┤   │ │
+│     │  │  USER: {Current user message}                                   │   │ │
+│     │  └─────────────────────────────────────────────────────────────────┘   │ │
+│     └─────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  5. ACT                                                                         │
+│     ┌─────────────────────────────────────────────────────────────────────────┐ │
+│     │  • Send to LM Studio /v1/chat/completions                               │ │
+│     │  • Stream response tokens via SSE (if streaming enabled)                │ │
+│     │  • Handle timeout and retry logic                                       │ │
+│     │  • Fallback to rule-based response if LLM unavailable                   │ │
+│     └─────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  6. LEARN                                                                       │
+│     ┌─────────────────────────────────────────────────────────────────────────┐ │
+│     │  • Append user message to conversation history                          │ │
+│     │  • Append assistant response to history                                 │ │
+│     │  • Update current topic if changed                                      │ │
+│     │  • Persist conversation to JSON file                                    │ │
+│     │  • Update topic history for multi-turn context                          │ │
+│     └─────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+Response to User
+```
+
+### Study Report Generation Flow
+
+```
+┌──────────────────────────────────────────────────────────────────────────────────┐
+│                       STUDY REPORT GENERATION FLOW                               │
+└──────────────────────────────────────────────────────────────────────────────────┘
+
+POST /tutor-report {student_id, unit_code}
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  1. DATA GATHERING                                                              │
+│     ├── Fetch student profile (completed units, progress)                       │
+│     ├── Fetch unit details via Part 1 API /unit/{code}                          │
+│     ├── Query RAG for supplementary materials                                   │
+│     └── Get learning outcomes and prerequisites                                 │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  2. CONTENT GENERATION (via LM Studio or Rule-based)                            │
+│     ├── Generate concept explanations for each learning outcome                 │
+│     ├── Create quiz questions (multiple choice, short answer)                   │
+│     ├── Compile study tips and strategies                                       │
+│     ├── Gather resource links (textbooks, videos, tutorials)                    │
+│     └── Build topic breakdown with difficulty ratings                           │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  3. REPORT ASSEMBLY                                                             │
+│     ├── Structure: Executive Summary                                            │
+│     ├──           Unit Overview                                                 │
+│     ├──           Learning Outcomes Analysis                                    │
+│     ├──           Prerequisite Review                                           │
+│     ├──           Study Schedule Recommendation                                 │
+│     ├──           Practice Quiz                                                 │
+│     └──           Additional Resources                                          │
+└─────────────────────────────────────────────────────────────────────────────────┘
+     │
+     ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│  4. PERSISTENCE & RESPONSE                                                      │
+│     ├── Cache report to JSON (part2/data/reports/{unit_code}.json)              │
+│     └── Return TutorReport model to client                                      │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Component Summary
+
+| Layer | Component | Technology | Purpose |
+|-------|-----------|------------|---------|
+| **Presentation** | Frontend | React, Vite, TypeScript, Tailwind | User interface, SSE streaming |
+| **API Gateway** | Part 1 API | FastAPI (8000) | Data access, RAG, web search |
+| **API Gateway** | Part 2 API | FastAPI (8001) | AI tutor, chat, reports |
+| **Agentic AI** | ConversationManager | Python | Memory, context, topic tracking |
+| **Agentic AI** | Report Generator | Python + LLM | Study report generation |
+| **Agentic AI** | LM Studio Client | OpenAI SDK | LLM inference, streaming |
+| **Knowledge** | RAG System | ChromaDB, HuggingFace | Semantic search, retrieval |
+| **Knowledge** | Web Scraper | BeautifulSoup4 | Live unit data extraction |
+| **Persistence** | Database | SQLite, SQLAlchemy | Structured data storage |
+| **Persistence** | Vector Store | ChromaDB | Embedding storage |
+| **Persistence** | File Storage | JSON | Conversation history |
+| **External** | LM Studio | Local LLM Server | AI inference |
+| **External** | Macquarie Web | HTTP/HTML | Live unit guides |
+
 ## Prerequisites
 
 - Python 3.9+
